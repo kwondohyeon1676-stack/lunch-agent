@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
           price_range: "mid",
           tags: ["카이센동", "깔끔", "데이트"],
           description: "신선한 해산물이 듬뿍, 점심부터 호강하는 맛",
+          waiting_info: "캐치테이블 원격줄서기",
         },
         {
           id: 2,
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
           price_range: "mid",
           tags: ["콩국수", "웨이팅", "여의도명물"],
           description: "여의도 직장인들의 소울푸드, 줄 서도 먹어야 함",
+          waiting_info: "현장 대기만 가능 (회전율 빠름)",
         },
         {
           id: 3,
@@ -75,6 +77,7 @@ export async function POST(request: NextRequest) {
           price_range: "high",
           tags: ["뷰맛집", "브런치", "법카"],
           description: "50층 뷰와 함께 즐기는 우아한 브런치",
+          waiting_info: "네이버 예약 권장",
         },
         {
           id: 4,
@@ -84,6 +87,7 @@ export async function POST(request: NextRequest) {
           price_range: "mid",
           tags: ["회전초밥", "가성비", "무한리필"],
           description: "접시 쌓는 재미가 있는 회전초밥",
+          waiting_info: "테이블링 원격줄서기",
         },
         {
           id: 5,
@@ -93,6 +97,7 @@ export async function POST(request: NextRequest) {
           price_range: "low",
           tags: ["수제버거", "맥주무한", "자유분방"],
           description: "감자칩 무한리필에 힙한 수제버거 맛집",
+          waiting_info: "배달/포장 가능, 현장 대기",
         }
       ]
     }

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Check, MapPin, Utensils, CreditCard, RefreshCw, Send } from "lucide-react"
+import { Check, MapPin, Utensils, CreditCard, RefreshCw, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ReportModal } from "@/components/report-modal"
 import { DonationButton } from "@/components/donation-button"
@@ -26,6 +26,7 @@ type Restaurant = {
   price_range: string
   tags: string[]
   description: string
+  waiting_info?: string
 }
 
 type RecommendationResult = {
@@ -165,6 +166,13 @@ export default function Home() {
     window.open(`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(restaurantName)}`, "_blank")
   }
 
+  // Scroll to top when result appears
+  useEffect(() => {
+    if (step === "result") {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }, [step])
+
   if (step === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F9FAFB]">
@@ -200,7 +208,7 @@ export default function Home() {
           </div>
 
           <div className="relative z-10">
-            <Card className="overflow-hidden border-0 shadow-xl rounded-2xl relative">
+            <Card className="mb-0 overflow-hidden rounded-t-2xl rounded-b-none border-0 shadow-xl relative">
               <div className="bg-gradient-to-br from-[#3182F6] to-[#1e5dd8] p-8 text-white text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
                 <div className="absolute bottom-0 left-0 -ml-8 -mb-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
@@ -253,6 +261,13 @@ export default function Home() {
                   </div>
                 </div>
 
+                {result.restaurant!.waiting_info && (
+                  <div className="mb-6 flex items-center justify-center gap-2 rounded-lg border border-blue-100 bg-blue-50 py-3 text-sm text-blue-700">
+                    <Clock className="h-4 w-4" />
+                    <span className="font-semibold">{result.restaurant!.waiting_info}</span>
+                  </div>
+                )}
+
                 <Button
                   onClick={() => openMap(result.restaurant!.name)}
                   className="w-full h-12 bg-[#F2F4F6] text-[#4E5968] hover:bg-[#E5E8EB] font-semibold text-base gap-2"
@@ -274,7 +289,7 @@ export default function Home() {
                 처음부터 다시
               </Button>
               <Button onClick={() => handleSelection("mood", selection.mood!)} className="h-14 bg-[#3182F6] hover:bg-[#1e5dd8] font-bold text-base shadow-lg shadow-blue-500/20">
-                이 조건으로 다른 곳
+                다른 식당은?
               </Button>
             </div>
           </div>
