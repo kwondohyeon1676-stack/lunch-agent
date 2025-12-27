@@ -8,6 +8,12 @@ Backend/DB: Supabase (PostgreSQL)
 AI: OpenAI API (GPT-4o mini)
 Payment: Toss Payments (Widget - Test Mode)
 Deployment: Vercel
+
+2. 아키텍처 설계 (Architecture Design) - [NEW]
+- **Feature-based Architecture**: `features/recommendation`, `features/live-chat` 등 기능 단위로 폴더 구조화.
+- **Funnel Pattern**: `hooks/use-recommendation-funnel`을 통해 복잡한 상태 관리 로직 분리.
+- **Service Layer**: 비즈니스 로직(DB, AI)을 API Route에서 분리하여 `lib/services/`로 이동.
+- **Atomic Design**: UI 컴포넌트를 재사용 가능한 단위로 분리.
 2. 데이터베이스 설계 (Supabase Schema)
 AI에게 아래 SQL을 실행하거나 테이블을 생성하라고 지시합니다.
 
@@ -63,7 +69,7 @@ UX Improvements:
 Action:
 [지도 보기]: 카드 내 아이콘 버튼으로 통합.
 [처음부터 다시]: 온보딩 리셋.
-[이 조건으로 다른 곳]: 결과만 재추천.
+[다른 식당은?]: 결과만 재추천.
 Report Modal (제보):
 위치, 식당명, 한줄평 입력창 -> OpenAI API (JSON 변환) -> Supabase Insert (status: pending).
 개인정보: 수집하지 않음 (익명).

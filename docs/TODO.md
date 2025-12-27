@@ -40,43 +40,71 @@
 ## P0.5: UX/UI 폴리싱 (Visual Upgrade)
 **목표**: '테크 회사' 수준의 세련된 사용자 경험 제공
 
-- [ ] **Hero Section 동적 타이틀**
+- [✅] **Hero Section 동적 타이틀**
   - Acceptance: 선택한 상황(페르소나)에 따라 "팀장님 만족 100%" 등 맞춤형 멘트 표시
   - Notes: `getDynamicTitle(selection)` 함수 구현
 
-- [ ] **결과 카드 디자인 전면 개편**
+- [✅] **결과 카드 디자인 전면 개편**
   - Acceptance: 아이콘(🍱, 📍, 💰) 적용, 지도 버튼 내재화, 3D 아이콘 Header 추가
   - Notes: `Lucide` 아이콘 활용, 카테고리별 Placeholder 매핑
 
-- [ ] **결과 카드 예약/웨이팅 정보 추가**
+- [✅] **결과 카드 예약/웨이팅 정보 추가**
   - Acceptance: '캐치테이블', '현장대기' 등 예약 정보 표시
   - Notes: DB 및 Mock 데이터에 `waiting_info` 컬럼 추가
 
-- [ ] **라이브 채팅 UI 통합**
+- [✅] **라이브 채팅 UI 통합**
   - Acceptance: 추천 카드 하단에 '부착된' 형태(아코디언/티켓)로 디자인 수정
   - Notes: `red dot` 애니메이션 수정 (단일 Ripple 효과)
 
-- [ ] **버튼 네이밍 명확화**
-  - Acceptance: '다시 하기' -> '처음부터 다시', '다른 곳 추천' -> '이 조건으로 다른 곳' 변경
+- [✅] **버튼 네이밍 명확화**
+  - Acceptance: '다시 하기' -> '처음부터 다시', '다른 곳 추천' -> '다른 식당은?' 변경
 
-## P1: Supabase (DB, Auth, API) 연결 및 데이터 연동
+## P1: 아키텍처 리팩토링 (Architecture Refactoring) - [NEW]
+**목표**: 확장성과 유지보수성을 고려한 견고한 코드베이스 구축
+
+- [✅] **Step 1: 타입 및 상수 분리 (Shared Domain)**
+  - Acceptance: `features/recommendation/types.ts`, `constants.ts` 생성 및 적용
+  - Notes: 중복 타입 제거 및 매직 넘버 상수화
+
+- [✅] **Step 2: Service Layer 구현**
+  - Acceptance: `lib/services/recommendation.service.ts` 생성
+  - Notes: API Route 로직 이동 및 테스트 용이성 확보
+
+- [✅] **Step 3: Funnel Pattern 도입**
+  - Acceptance: `use-recommendation-funnel.ts` 훅 구현
+  - Notes: `page.tsx`의 상태 관리 로직 분리
+
+- [✅] **Step 4: UI 컴포넌트 분리**
+  - Acceptance: `features/recommendation/components/` 하위에 단계별 컴포넌트 생성
+  - Notes: `QuestionCard`, `ResultView` 등
+
+## P1.5: Supabase (DB, Auth, API) 연결 및 데이터 연동
 **목표**: 실제 데이터를 저장/조회하고 AI 로직을 심어 서비스 기능 작동
 
-- [ ] **Supabase 프로젝트 연동**
-  - Acceptance: `restaurants` 테이블 생성 및 환경변수 연결
+- [x] **Supabase 프로젝트 연동**
+  - [x] Acceptance: `lib/supabase` 유틸리티 및 `middleware.ts` 구현 완료
+  - [x] Acceptance: `restaurants` 테이블 생성 및 Seed 데이터 주입
   - Notes: 스키마(id, name, location_type, category, tags, status, etc.)
 
-- [ ] **초기 데이터(Seed Data) 확보**
-  - Acceptance: 여의도 주요 맛집 5곳 이상 DB Insert 완료
-  - Notes: 진주집, 세상의모든아침 등 테스트 데이터 확보
+- [x] **Type-Safe Database 구축**
+  - [x] Acceptance: `supabase gen types`로 DB 스키마 -> TypeScript 타입 자동 변환
+  - [x] Notes: `database.types.ts` 생성 및 전역 타입 적용
 
-- [ ] **AI 추천 API 구현 (Server Action/Route)**
-  - Acceptance: 필터링 조건 + GPT-4o mini 조합으로 최적 식당 1곳 반환
-  - Notes: 프롬프트 엔지니어링(블랙 코미디 톤) 적용 완료
+- [x] **DB 관리 체계화 (Migration)**
+  - [x] Acceptance: `supabase/migrations` 폴더 생성 및 초기 스키마 SQL 파일 관리
+  - [x] Notes: `config.toml` 설정 확인
 
-- [ ] **맛집 제보 API 구현**
-  - Acceptance: 유저 입력 텍스트 -> GPT JSON 변환 -> DB Insert(`pending`)
-  - Notes: 익명 제보, 개인정보 수집 없음
+- [x] **초기 데이터(Seed Data) 확보**
+  - [x] Acceptance: 여의도 주요 맛집 5곳 이상 DB Insert 완료
+  - [x] Notes: `seed.sql` 파일로 관리
+
+- [x] **AI 추천 Server Action 구현 (API Logic 전면 교체)**
+  - [x] Acceptance: 기존 `app/api/recommend/route.ts` -> Server Action (`actions/recommend.ts`)으로 리팩토링
+  - [x] Notes: Cloudflare Workers 등 Edge 호환성 고려, Client Component에서 직접 호출
+
+- [x] **맛집 제보 Server Action 구현**
+  - [x] Acceptance: `actions/report.ts` 구현 (GPT JSON 변환 -> DB Insert)
+  - [x] Notes: 익명 제보, Zod 스키마 검증 추가
 
 - [ ] **보안 및 에러 핸들링 (기본)**
   - Acceptance: 결과 없음(Null) 시 에러 UI 표시, In-Memory Rate Limiting

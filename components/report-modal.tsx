@@ -13,6 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Send, Loader2 } from "lucide-react"
+import { submitReport } from "@/actions/report"
 
 export function ReportModal() {
     const [open, setOpen] = useState(false)
@@ -27,16 +28,12 @@ export function ReportModal() {
         setIsSubmitting(true)
         try {
             const combinedText = `위치: ${location}\n식당명: ${name}\n한줄평: ${review}`
-            const response = await fetch("/api/report", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: combinedText }),
-            })
 
-            const data = await response.json()
+            // Server Action 호출
+            const result = await submitReport({ text: combinedText })
 
-            if (!response.ok) {
-                throw new Error(data.error || "제보 중 오류가 발생했습니다.")
+            if (result.error) {
+                throw new Error(result.error)
             }
 
             toast.success("제보해 주셔서 감사합니다! (승인 대기 중)")
