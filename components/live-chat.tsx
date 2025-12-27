@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Send, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
+
 
 type Message = {
     id: number
@@ -49,14 +49,43 @@ export function LiveChat() {
     // Auto-scroll to bottom
     useEffect(() => {
         if (scrollRef.current) {
-            scrollRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" })
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
         }
     }, [messages])
 
-    // ... (keep existing code)
+    // Simulate incoming messages
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (Math.random() > 0.7) return // 30% chance to skip
+
+            const randomMsg = MOCK_MESSAGES[Math.floor(Math.random() * MOCK_MESSAGES.length)]
+            const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)]
+
+            setMessages((prev) => [
+                ...prev,
+                { id: Date.now(), name: randomName, content: randomMsg, isMe: false },
+            ])
+        }, 3500)
+
+        return () => clearInterval(interval)
+    }, [])
+
+    const handleSendMessage = () => {
+        if (!inputValue.trim()) return
+
+        setMessages((prev) => [
+            ...prev,
+            { id: Date.now(), name: nickname, content: inputValue, isMe: true },
+        ])
+        setInputValue("")
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") handleSendMessage()
+    }
 
     return (
-        <div className="w-full overflow-hidden rounded-b-3xl border-x border-b border-gray-200 bg-[#F5F5F7] shadow-lg relative z-0 mx-auto max-w-[calc(100%-2px)]">
+        <div className="w-full overflow-hidden rounded-b-3xl border-x border-b border-gray-200 bg-[#F5F5F7] shadow-lg relative z-0">
             {/* Connection Line */}
             <div className="w-full border-t-2 border-dashed border-gray-300 opacity-50"></div>
 
@@ -76,7 +105,10 @@ export function LiveChat() {
             </div>
 
             {/* Chat Area */}
-            <ScrollArea className="h-[200px] bg-[#F5F5F7] p-4">
+            <div
+                ref={scrollRef}
+                className="h-[200px] overflow-y-auto bg-[#F5F5F7] p-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+            >
                 <div className="flex flex-col gap-2">
                     {messages.map((msg) => (
                         <div
@@ -92,9 +124,8 @@ export function LiveChat() {
                             </div>
                         </div>
                     ))}
-                    <div ref={scrollRef} />
                 </div>
-            </ScrollArea>
+            </div>
 
             {/* Input Area */}
             <div className="border-t border-gray-100 bg-white p-3">

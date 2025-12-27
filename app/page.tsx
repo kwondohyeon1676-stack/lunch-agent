@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Check, MapPin, Utensils, CreditCard, RefreshCw, Clock } from "lucide-react"
@@ -204,7 +204,7 @@ export default function Home() {
         <div className="mx-auto max-w-2xl pt-8">
           <div className="mb-8 text-center">
             <h1 className="mb-2 text-2xl font-bold text-gray-900 text-balance">{getDynamicTitle(selection)}</h1>
-            <p className="text-gray-600">AI가 엄선한 최적의 장소입니다</p>
+            <p className="text-gray-600 font-medium break-keep">"{result.aiComment}"</p>
           </div>
 
           <div className="relative z-10">
@@ -213,11 +213,12 @@ export default function Home() {
                 <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
                 <div className="absolute bottom-0 left-0 -ml-8 -mb-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
 
-                <div className="text-6xl mb-4 drop-shadow-lg animate-bounce-slow">
-                  {getCategoryEmoji(result.restaurant!.category)}
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="text-5xl drop-shadow-lg animate-bounce-slow">
+                    {getCategoryEmoji(result.restaurant!.category)}
+                  </div>
+                  <h2 className="text-3xl font-bold tracking-tight text-white">{result.restaurant!.name}</h2>
                 </div>
-
-                <h2 className="mb-3 text-3xl font-bold tracking-tight">{result.restaurant!.name}</h2>
                 <div className="flex flex-wrap justify-center gap-2 mb-2">
                   {result.restaurant!.tags.map((tag) => (
                     <span key={tag} className="rounded-full bg-white/20 px-3 py-1 text-sm font-medium backdrop-blur-sm">
@@ -228,45 +229,39 @@ export default function Home() {
               </div>
 
               <div className="p-6 bg-white">
-                <div className="mb-6 relative">
-                  <div className="absolute -top-3 left-4 text-4xl text-[#E8F3FF]">❝</div>
-                  <div className="rounded-xl bg-[#F0F7FF] p-5 relative z-10">
-                    <p className="font-medium text-gray-800 text-lg leading-relaxed text-center">"{result.aiComment}"</p>
-                  </div>
-                  <div className="absolute -bottom-3 right-4 text-4xl text-[#E8F3FF] rotate-180">❝</div>
-                </div>
 
-                <div className="grid grid-cols-3 gap-2 mb-6">
-                  <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 p-3">
-                    <Utensils className="h-5 w-5 text-gray-400 mb-1" />
-                    <span className="text-xs text-gray-500">카테고리</span>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 p-4">
+                    <Utensils className="h-5 w-5 text-gray-400 mb-1.5" />
+                    <span className="text-xs text-gray-500 mb-0.5">카테고리</span>
                     <span className="font-semibold text-gray-900">{result.restaurant!.category}</span>
                   </div>
-                  <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 p-3">
-                    <MapPin className="h-5 w-5 text-gray-400 mb-1" />
-                    <span className="text-xs text-gray-500">거리</span>
+                  <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 p-4">
+                    <MapPin className="h-5 w-5 text-gray-400 mb-1.5" />
+                    <span className="text-xs text-gray-500 mb-0.5">거리</span>
                     <span className="font-semibold text-gray-900">
                       {result.restaurant!.location_type === "indoor" ? "건물 내" :
                         result.restaurant!.location_type === "near" ? "5분 컷" :
                           result.restaurant!.location_type === "walk" ? "10분 산책" : "택시 이동"}
                     </span>
                   </div>
-                  <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 p-3">
-                    <CreditCard className="h-5 w-5 text-gray-400 mb-1" />
-                    <span className="text-xs text-gray-500">가격대</span>
+                  <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 p-4">
+                    <CreditCard className="h-5 w-5 text-gray-400 mb-1.5" />
+                    <span className="text-xs text-gray-500 mb-0.5">가격대</span>
                     <span className="font-semibold text-gray-900">
                       {result.restaurant!.price_range === "low" ? "저렴함" :
                         result.restaurant!.price_range === "mid" ? "적당함" : "법카용"}
                     </span>
                   </div>
-                </div>
-
-                {result.restaurant!.waiting_info && (
-                  <div className="mb-6 flex items-center justify-center gap-2 rounded-lg border border-blue-100 bg-blue-50 py-3 text-sm text-blue-700">
-                    <Clock className="h-4 w-4" />
-                    <span className="font-semibold">{result.restaurant!.waiting_info}</span>
+                  <div className="flex flex-col items-center justify-center rounded-xl bg-blue-50/50 p-4 border border-blue-100/50">
+                    <Clock className="h-5 w-5 text-blue-400 mb-1.5" />
+                    <span className="text-xs text-blue-500 mb-0.5">웨이팅/예약</span>
+                    <span className="font-semibold text-gray-900">
+                      {result.restaurant!.waiting_info || "현장 대기"}
+                    </span>
                   </div>
-                )}
+                </div>
 
                 <Button
                   onClick={() => openMap(result.restaurant!.name)}
