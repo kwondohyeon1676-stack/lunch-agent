@@ -23,7 +23,25 @@ export function ReportModal() {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleSubmit = async () => {
-        if (!location.trim() || !name.trim() || !review.trim()) return
+        // 상세 유효성 검사 및 안내
+        if (!location.trim()) {
+            toast.error("식당 위치를 입력해 주세요.")
+            return
+        }
+        if (!name.trim()) {
+            toast.error("식당 이름을 입력해 주세요.")
+            return
+        }
+        if (!review.trim()) {
+            toast.error("맛집에 대한 한줄평을 입력해 주세요.")
+            return
+        }
+
+        // 너무 짧은 입력 방지
+        if (location.trim().length < 2 || name.trim().length < 2 || review.trim().length < 5) {
+            toast.error("조금 더 자세하게 입력해 주시면 AI가 더 잘 분석할 수 있어요! (한줄평은 5자 이상)")
+            return
+        }
 
         setIsSubmitting(true)
         try {
@@ -36,7 +54,7 @@ export function ReportModal() {
                 throw new Error(result.error)
             }
 
-            toast.success("제보해 주셔서 감사합니다! (승인 대기 중)")
+            toast.success(result.message || "제보해 주셔서 감사합니다! (승인 대기 중)")
             setOpen(false)
             setLocation("")
             setName("")
@@ -96,8 +114,8 @@ export function ReportModal() {
                 </div>
                 <Button
                     onClick={handleSubmit}
-                    disabled={isSubmitting || !location.trim() || !name.trim() || !review.trim()}
-                    className="h-14 w-full bg-[#3182F6] text-lg font-bold hover:bg-[#1e5dd8] rounded-xl"
+                    disabled={isSubmitting}
+                    className="h-14 w-full bg-[#3182F6] text-lg font-bold hover:bg-[#1e5dd8] rounded-xl disabled:bg-gray-300"
                 >
                     {isSubmitting ? (
                         <>
